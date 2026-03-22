@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, forwardRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, X, ChevronDown } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 
@@ -181,10 +181,10 @@ export const ALL_ICONS = Object.entries(ICON_CATEGORIES).flatMap(([cat, icons]) 
 );
 
 // Render a single lucide icon by name
-export const LucideIcon = ({ name, size = 18, className = '' }) => {
+export const LucideIcon = ({ name, size = 18, className = '', style }) => {
   const Comp = LucideIcons[name];
   if (!Comp) return null;
-  return <Comp size={size} className={className} />;
+  return <Comp size={size} className={className} style={style} />;
 };
 
 // ─── IconPicker Component ────────────────────────────────────────────────────

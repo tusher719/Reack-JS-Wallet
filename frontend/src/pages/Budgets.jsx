@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
-import { budgetAPI, categoryAPI } from '../services/api';
+import { budgetAPI } from '../services/api';
 import { useApp } from '../contexts/AppContext';
 import { formatCurrency } from '../utils/helpers';
 import Modal from '../components/common/Modal';
@@ -63,7 +63,7 @@ export default function Budgets() {
     } catch (e) {} finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchBudgets(); }, [currentDate]);
+  useEffect(() => { fetchBudgets(); }, [currentDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const flatCategories = [];
   const flatten = (cats, d=0) => cats.forEach(c => { flatCategories.push({...c,d}); if(c.children) flatten(c.children,d+1); });

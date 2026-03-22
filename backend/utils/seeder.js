@@ -21,21 +21,21 @@ const seed = async () => {
   }
 
   // Default accounts
-  const accountCount = await Account.countDocuments({ user: user._id });
-  if (accountCount === 0) {
-    await Account.insertMany([
+  // পুরনো accounts ও categories delete করো
+  await Account.deleteMany({ user: user._id });
+  await Category.deleteMany({ user: user._id });
+  await Tag.deleteMany({ user: user._id });
+
+  await Account.insertMany([
       { user: user._id, name: 'bKash', color: '#e91e8c', icon: '📱', type: 'General', initialBalance: 5000, currentBalance: 5000 },
       { user: user._id, name: 'Cash Wallet', color: '#10b981', icon: '💵', type: 'Cash', initialBalance: 2000, currentBalance: 2000 },
       { user: user._id, name: 'Bank Account', color: '#6175f4', icon: '🏦', type: 'Savings', initialBalance: 50000, currentBalance: 50000 },
       { user: user._id, name: 'Credit Card', color: '#f59e0b', icon: '💳', type: 'Credit', initialBalance: 0, currentBalance: 0 },
     ]);
-    console.log('✅ Default accounts created');
-  }
+  console.log('✅ Default accounts created');
 
   // Default categories
-  const catCount = await Category.countDocuments({ user: user._id });
-  if (catCount === 0) {
-    const expenseCats = [
+  const expenseCats = [
       { name: 'Food & Dining', icon: '🍔', color: '#f59e0b', nature: 'Need', type: 'expense' },
       { name: 'Transportation', icon: '🚗', color: '#6175f4', nature: 'Need', type: 'expense' },
       { name: 'Shopping', icon: '🛒', color: '#ec4899', nature: 'Want', type: 'expense' },
@@ -62,20 +62,16 @@ const seed = async () => {
         { user: user._id, name: 'Street Food', icon: '🌮', color: '#f97316', nature: 'Want', type: 'expense', parent: foodCat._id, level: 1 },
       ]);
     }
-    console.log('✅ Default categories created');
-  }
+  console.log('✅ Default categories created');
 
   // Default tags
-  const tagCount = await Tag.countDocuments({ user: user._id });
-  if (tagCount === 0) {
-    await Tag.insertMany([
-      { user: user._id, name: 'Essential', color: '#10b981' },
-      { user: user._id, name: 'Recurring', color: '#6175f4' },
-      { user: user._id, name: 'One-time', color: '#f59e0b' },
-      { user: user._id, name: 'Tax Deductible', color: '#8b5cf6' },
-    ]);
-    console.log('✅ Default tags created');
-  }
+  await Tag.insertMany([
+    { user: user._id, name: 'Essential', color: '#10b981' },
+    { user: user._id, name: 'Recurring', color: '#6175f4' },
+    { user: user._id, name: 'One-time', color: '#f59e0b' },
+    { user: user._id, name: 'Tax Deductible', color: '#8b5cf6' },
+  ]);
+  console.log('✅ Default tags created');
 
   console.log('\n🚀 Seeding complete!');
   console.log('   Login: demo@walletOS.com');

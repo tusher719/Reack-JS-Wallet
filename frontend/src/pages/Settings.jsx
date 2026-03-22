@@ -3,15 +3,17 @@ import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
 import { categoryAPI, tagAPI } from '../services/api';
 import { COLORS, CATEGORY_ICONS, NATURE_TYPES } from '../utils/helpers';
+import { APP_VERSION, BUILD_DATE, CHANGELOG } from '../version';
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Edit2, User, Bell, Shield, Palette, Tag as TagIcon, Layers } from 'lucide-react';
+import { Plus, Trash2, Edit2, User, Bell, Shield, Palette, Tag as TagIcon, Layers, Info } from 'lucide-react';
 
 const TABS = [
-  { id: 'profile', label: 'Profile', icon: User },
-  { id: 'categories', label: 'Categories', icon: Layers },
-  { id: 'tags', label: 'Tags', icon: TagIcon },
-  { id: 'security', label: 'Security', icon: Shield },
+  { id: 'profile',    label: 'Profile',     icon: User },
+  { id: 'categories', label: 'Categories',  icon: Layers },
+  { id: 'tags',       label: 'Tags',        icon: TagIcon },
+  { id: 'security',   label: 'Security',    icon: Shield },
+  { id: 'about',      label: 'About',       icon: Info },
 ];
 
 function ProfileSettings() {
@@ -207,9 +209,213 @@ function SecuritySettings() {
   );
 }
 
+function AboutSettings() {
+
+  const PENDING_TASKS = [
+    { id: 1, label: 'Transaction list-এ icon দেখানো', status: 'done' },
+    { id: 2, label: 'Category dropdown — icon + search UI', status: 'done' },
+    { id: 3, label: 'Tags search dropdown', status: 'done' },
+    { id: 4, label: 'Status custom dropdown', status: 'done' },
+    { id: 5, label: 'Tab-wise modal color theming', status: 'done' },
+    { id: 6, label: 'Amount UI redesign + sign badge', status: 'done' },
+    { id: 7, label: 'Calculator popup (click-to-open)', status: 'done' },
+    { id: 8, label: 'Calculator bugs fix', status: 'done' },
+    { id: 9, label: 'Payer field যোগ', status: 'done' },
+    { id: 10, label: 'Add Record + Another Record button', status: 'done' },
+    { id: 11, label: 'LocalStorage-এ preferences persist', status: 'done' },
+    { id: 12, label: 'Live account balance modal-এ', status: 'done' },
+    { id: 13, label: 'Settings → About page', status: 'done' },
+    { id: 14, label: 'Version system (version.js)', status: 'done' },
+    { id: 15, label: 'Dashboard charts উন্নত করা', status: 'pending' },
+    { id: 16, label: 'Debt tracker page improve করা', status: 'pending' },
+    { id: 17, label: 'Export to Excel / PDF', status: 'pending' },
+    { id: 18, label: 'Budget over-alert notification', status: 'pending' },
+    { id: 19, label: 'Dark/Light theme manual toggle', status: 'pending' },
+    { id: 20, label: 'Search by amount range / date range', status: 'pending' },
+    { id: 21, label: 'Recurring transaction auto-create', status: 'pending' },
+    { id: 22, label: 'Mobile PWA install support', status: 'pending' },
+  ];
+
+  const FUTURE_FEATURES = [
+    {
+      icon: '📱',
+      title: 'Mobile App (PWA)',
+      desc: 'Browser থেকে "Add to Home Screen" করলেই app-এর মতো কাজ করবে। Push notification, offline mode support।',
+      steps: ['manifest.json আপডেট করো', 'Service Worker যোগ করো', 'Offline cache setup করো'],
+    },
+    {
+      icon: '🖥️',
+      title: 'Desktop App (Electron)',
+      desc: 'Electron দিয়ে Windows/Mac/Linux desktop app বানানো যাবে। System tray, local backup সহ।',
+      steps: ['electron + electron-builder install করো', 'main.js entry point বানাও', 'npm run build করে package করো'],
+    },
+    {
+      icon: '📊',
+      title: 'Advanced Reports',
+      desc: 'Monthly/yearly comparison, category-wise spending trend, net worth tracker, custom date range charts।',
+      steps: ['নতুন /api/stats/advanced endpoint বানাও', 'Recharts-এ AreaChart/ComposedChart যোগ করো', 'PDF export (jsPDF) যোগ করো'],
+    },
+    {
+      icon: '🔔',
+      title: 'Smart Notifications',
+      desc: 'Budget limit পৌঁছালে, debt due date আসলে, বড় transaction হলে — email বা in-app alert।',
+      steps: ['nodemailer setup করো backend-এ', 'Cron job already আছে — alert logic যোগ করো', 'Frontend notification center improve করো'],
+    },
+    {
+      icon: '🌐',
+      title: 'Multi-Currency',
+      desc: 'BDT, USD, EUR — যেকোনো currency-তে transaction রাখো। Live exchange rate API দিয়ে auto convert।',
+      steps: ['Exchange rate API (exchangerate-api.com) যোগ করো', 'Transaction model-এ currency field যোগ করো', 'Dashboard-এ currency switcher বানাও'],
+    },
+    {
+      icon: '👥',
+      title: 'Multi-User / Family',
+      desc: 'একই account-এ পরিবারের সবাই access করতে পারবে। Role-based permission সহ।',
+      steps: ['User model-এ family/group concept যোগ করো', 'Invite system বানাও (email link)', 'Permission middleware আপডেট করো'],
+    },
+  ];
+
+  const done    = PENDING_TASKS.filter(t => t.status === 'done');
+  const pending = PENDING_TASKS.filter(t => t.status === 'pending');
+  const pct     = Math.round((done.length / PENDING_TASKS.length) * 100);
+
+  return (
+    <div className="space-y-6">
+
+      {/* ── App Header ── */}
+      <div className="rounded-2xl p-6 text-center"
+        style={{ background: 'linear-gradient(135deg, rgba(97,117,244,0.15) 0%, rgba(16,185,129,0.10) 100%)', border: '1px solid rgba(97,117,244,0.25)' }}>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl"
+          style={{ background: 'linear-gradient(135deg, #6175f4, #10b981)' }}>💰</div>
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white font-display">WalletOS</h2>
+        <p className="text-surface-400 text-sm mt-0.5">Personal Finance Manager</p>
+        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full text-xs font-semibold"
+          style={{ backgroundColor: 'rgba(97,117,244,0.15)', color: '#6175f4', border: '1px solid rgba(97,117,244,0.3)' }}>
+          v{APP_VERSION} · {BUILD_DATE}
+        </div>
+      </div>
+
+      {/* ── Tech Stack ── */}
+      <div className="card p-4">
+        <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-3">Tech Stack</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { label: 'Frontend', value: 'React 18 + Tailwind CSS' },
+            { label: 'Backend',  value: 'Node.js + Express'       },
+            { label: 'Database', value: 'MongoDB + Mongoose'       },
+            { label: 'Auth',     value: 'JWT + bcrypt'             },
+            { label: 'Charts',   value: 'Recharts'                 },
+            { label: 'Icons',    value: 'Lucide React'             },
+          ].map(item => (
+            <div key={item.label} className="bg-surface-50 dark:bg-surface-800 rounded-xl px-3 py-2">
+              <p className="text-[10px] text-surface-400 uppercase tracking-wide">{item.label}</p>
+              <p className="text-xs font-semibold text-surface-700 dark:text-surface-200 mt-0.5">{item.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Task Progress ── */}
+      <div className="card p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300">Task Progress</h3>
+          <span className="text-xs font-bold" style={{ color: '#6175f4' }}>{done.length}/{PENDING_TASKS.length} done</span>
+        </div>
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden mb-4">
+          <div className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #6175f4, #10b981)' }} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-1.5">
+          {PENDING_TASKS.map(task => (
+            <div key={task.id} className="flex items-center gap-2.5 py-1">
+              <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] ${
+                task.status === 'done'
+                  ? 'bg-emerald-500/20 text-emerald-500'
+                  : 'bg-amber-500/15 text-amber-500'
+              }`}>
+                {task.status === 'done' ? '✓' : '○'}
+              </div>
+              <p className={`text-xs flex-1 ${task.status === 'done' ? 'text-surface-400 line-through' : 'text-surface-600 dark:text-surface-300'}`}>
+                {task.label}
+              </p>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                task.status === 'done'
+                  ? 'bg-emerald-500/15 text-emerald-500'
+                  : 'bg-amber-500/15 text-amber-500'
+              }`}>
+                {task.status === 'done' ? 'Done' : 'Pending'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Future Improvements (Grid) ── */}
+      <div className="card p-4">
+        <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-4">
+          🚀 কীভাবে App আরো উন্নত করা যায়
+        </h3>
+        <div className="grid grid-cols-1 gap-3">
+          {FUTURE_FEATURES.map(f => (
+            <div key={f.title} className="rounded-xl p-3.5"
+              style={{ background: 'rgba(97,117,244,0.06)', border: '1px solid rgba(97,117,244,0.12)' }}>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl shrink-0">{f.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-surface-800 dark:text-surface-100">{f.title}</p>
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5 leading-relaxed">{f.desc}</p>
+                  <div className="mt-2 space-y-1">
+                    {f.steps.map((step, i) => (
+                      <div key={i} className="flex items-start gap-1.5">
+                        <span className="text-[10px] font-bold text-primary-500 shrink-0 mt-0.5">{i + 1}.</span>
+                        <p className="text-[11px] text-surface-500 dark:text-surface-400">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Changelog ── */}
+      <div className="card p-4">
+        <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-4">📋 Changelog</h3>
+        <div className="space-y-4">
+          {CHANGELOG.map((release, i) => (
+            <div key={release.version}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold"
+                  style={{ backgroundColor: i === 0 ? 'rgba(97,117,244,0.15)' : 'rgba(100,116,139,0.1)', color: i === 0 ? '#6175f4' : '#94a3b8', border: `1px solid ${i === 0 ? 'rgba(97,117,244,0.3)' : 'rgba(100,116,139,0.2)'}` }}>
+                  v{release.version}
+                </span>
+                <span className="text-xs text-surface-400">{release.date}</span>
+                {i === 0 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-500 font-semibold">Latest</span>}
+              </div>
+              <div className="space-y-1 pl-2">
+                {release.changes.map(ch => (
+                  <div key={ch} className="flex items-start gap-2">
+                    <span className="text-primary-500 text-xs mt-0.5 shrink-0">•</span>
+                    <p className="text-xs text-surface-500 dark:text-surface-400">{ch}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-center text-xs text-surface-400">Built with ❤️ · {new Date().getFullYear()}</p>
+    </div>
+  );
+}
+
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
-  const CONTENT = { profile: ProfileSettings, categories: CategorySettings, tags: TagSettings, security: SecuritySettings };
+  const CONTENT = { profile: ProfileSettings, categories: CategorySettings, tags: TagSettings, security: SecuritySettings, about: AboutSettings };
   const Content = CONTENT[activeTab];
 
   return (
